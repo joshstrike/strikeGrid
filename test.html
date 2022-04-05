@@ -1,0 +1,171 @@
+<html>
+    <head>
+        <style>
+            :root {
+                --row-height:40px;
+                --template-cols:2fr repeat(6, 1fr);
+            }
+            .table-container {
+                max-width:80%;
+                height:100%;
+                background-color:#CCC;
+            }
+            .base-grid {
+                display: grid;
+                grid-row-gap:3px;
+                grid-template-columns: var(--template-cols);
+                grid-auto-rows:minmax(var(--row-height), auto);
+            }
+            .header-grid {
+                /* stick comes into effect if the container is larger than the content,
+                 * and causes its outer container to scroll. */
+                position: sticky; 
+                top:0px;
+                grid-column-gap:1px;
+                z-index: 1000;
+                background-color: #444;
+
+                /* test */
+                grid-template-areas: '. . . bla bla bla bla';
+            }
+            .header-grid > div {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color:white;
+                width: 100%;
+            }
+            .header-grid > div:nth-child(even) {
+                background-color: rgb(104, 90, 90);
+            }
+            .header-grid > div:nth-child(odd) {
+                background-color: rgb(133, 90, 90);
+            }
+            .scroll-grid {
+                background-color:#f99;
+                overflow:scroll;
+                max-height: calc(100% - var(--row-height));
+            }
+            .row-wrapper {
+                display: contents;
+            }
+            .row-wrapper > div {
+                background-color: #f88;
+                display: flex;
+            }
+            .row-wrapper > div:nth-child(odd) {
+                background-color:rgb(226, 131, 131);
+            }
+            .left {
+                grid-area: span 2 / span 1;
+            }
+        </style>
+
+        <script>
+            function highlight(e) {
+                e.target.parentElement.querySelectorAll('.test')
+                    .forEach((b)=>
+                    b.style.backgroundColor=e.type=='mouseover' ? 'rgba(255,0,0,.3)' : '');
+            }
+            window.addEventListener('load', ()=>{
+                    document.querySelectorAll('.row-wrapper')
+                    .forEach((a)=>{
+                        a.addEventListener('mouseover',highlight);
+                        a.addEventListener('mouseout',highlight);
+                    });
+                });
+        </script>
+    </head>
+    <body>
+        
+        <div class='table-container'>
+            <div class="base-grid header-grid">
+                <div>item1</div>
+                <div>item2</div>
+                <div>item3</div>
+                <div style="grid-area:bla;">what the fuck!</div>
+            </div>
+            <div class="base-grid scroll-grid">
+                <div class="left">
+                    <div style="position:sticky;top:0px;">test</div>
+                    <div style="position:relative;top:20px;">hello</div>
+                </div>
+
+                <div class="row-wrapper">
+                    <div class="test">b</div>
+                    <div class="test">c</div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                </div>
+
+                <div class="row-wrapper">
+                    <div class="test">b</div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                </div>
+
+                <div class="row-wrapper">
+                    <div class="test" style="grid-column:1 / span 7;display:flex;flex-wrap:wrap;align-items:center;">
+                        <div style="display:flex;position:relative;left:60px;width:calc(100% - 80px);height:20px;background-color:red;">what?</div>
+                        <div style="display:flex;position:relative;left:60px;width:80%;height:20px;background-color:red;">what?</div>
+                        <div style="display:flex;position:relative;left:60px;width:80%;height:70px;background-color:rgb(130, 125, 197);">what?</div>
+                    </div>
+                </div>
+
+                <div class="left">
+                    <div style="position:sticky;top:0px;align-items: start;">test</div>
+                    <div style="position:relative;top:20px;">hello</div>
+                </div>
+
+                <div class="row-wrapper">
+                    <div class="test">b</div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                </div>
+                <div class="row-wrapper">
+                    <div class="test">b</div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                </div>
+                <div class="row-wrapper">
+                    <div class="test">LAST</div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                </div>
+                <div class="row-wrapper">
+                    <div class="test">LAST</div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                </div>
+                <div class="row-wrapper">
+                    <div class="test">LAST</div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                    <div class="test"></div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

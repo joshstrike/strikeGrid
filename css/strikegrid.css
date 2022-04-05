@@ -1,0 +1,249 @@
+@charset "UTF-8";
+.strike-grid-holder {
+  max-width: 100%;
+  /* Normal usage. box-Sizes to the outer container, the height of which can be overridden with StrikeGrid.height: */
+  height: 100%;
+  /* Stick to outer example. This cannot be overridden with StrikeGrid.height.
+   * Note that the outer container must have max-height defined, and overflow:scroll in this case: */
+  /* height:fit-content; */
+  /* x-scrolling example. This is compatable with setting StrikeGrid.height, but NOT with automatically scaling to an outer container. 
+   * You must use fit-content: */
+  transition: all 0.16s;
+  /* BarkOps/BarkBack */
+}
+
+.table-container {
+  height: 100%;
+  max-width: 100%;
+  background-color: #CCC;
+  transition: all 0.16s;
+}
+
+.strike-grid {
+  display: grid;
+}
+
+.strike-grid-header {
+  /* sticky comes into effect if the container is larger than the content,
+      * and causes its outer container to scroll. */
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0px;
+  z-index: 1000;
+  background-color: #344;
+}
+
+arrow-down, arrow-up {
+  display: flex;
+  font-size: 0.8rem;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0px;
+  transform: rotate(90deg);
+}
+arrow-down::before, arrow-up::before {
+  content: "➢";
+}
+
+arrow-up {
+  transform: rotate(-90deg);
+}
+
+.strike-grid-header > [role=header-cel] {
+  display: flex;
+  overflow: hidden;
+  align-items: center;
+  color: white;
+  width: 100%;
+}
+.strike-grid-header > [role=header-cel]:nth-child(odd) {
+  background-color: #444;
+}
+.strike-grid-header > [role=header-cel]:nth-child(odd).sort-color-0 {
+  background-color: #535353;
+}
+.strike-grid-header > [role=header-cel]:nth-child(odd).sort-color-1 {
+  background-color: #54565f;
+}
+.strike-grid-header > [role=header-cel]:nth-child(odd).sort-color-2 {
+  background-color: #54586b;
+}
+.strike-grid-header > [role=header-cel]:nth-child(odd).sort-color-3 {
+  background-color: #565b77;
+}
+.strike-grid-header > [role=header-cel]:nth-child(odd).sort-color-4 {
+  background-color: #575d82;
+}
+.strike-grid-header > [role=header-cel]:nth-child(odd).sort-color-5 {
+  background-color: #59618e;
+}
+.strike-grid-header > [role=header-cel]:nth-child(odd).sort-color-6 {
+  background-color: #596498;
+}
+.strike-grid-header > [role=header-cel]:nth-child(odd).sort-color-7 {
+  background-color: #5b66a4;
+}
+.strike-grid-header > [role=header-cel]:nth-child(odd).sort-color-8 {
+  background-color: #606cab;
+}
+.strike-grid-header > [role=header-cel]:nth-child(odd).sort-color-9 {
+  background-color: #6571b2;
+}
+.strike-grid-header > [role=header-cel]:nth-child(odd).sort-color-10 {
+  background-color: #6a76bb;
+}
+.strike-grid-header > [role=header-cel]:nth-child(even) {
+  background-color: #535353;
+}
+.strike-grid-header > [role=header-cel]:nth-child(even).sort-color-0 {
+  background-color: #535353;
+}
+.strike-grid-header > [role=header-cel]:nth-child(even).sort-color-1 {
+  background-color: #54565f;
+}
+.strike-grid-header > [role=header-cel]:nth-child(even).sort-color-2 {
+  background-color: #54586b;
+}
+.strike-grid-header > [role=header-cel]:nth-child(even).sort-color-3 {
+  background-color: #565b77;
+}
+.strike-grid-header > [role=header-cel]:nth-child(even).sort-color-4 {
+  background-color: #575d82;
+}
+.strike-grid-header > [role=header-cel]:nth-child(even).sort-color-5 {
+  background-color: #59618e;
+}
+.strike-grid-header > [role=header-cel]:nth-child(even).sort-color-6 {
+  background-color: #596498;
+}
+.strike-grid-header > [role=header-cel]:nth-child(even).sort-color-7 {
+  background-color: #5b66a4;
+}
+.strike-grid-header > [role=header-cel]:nth-child(even).sort-color-8 {
+  background-color: #606cab;
+}
+.strike-grid-header > [role=header-cel]:nth-child(even).sort-color-9 {
+  background-color: #6571b2;
+}
+.strike-grid-header > [role=header-cel]:nth-child(even).sort-color-10 {
+  background-color: #6a76bb;
+}
+.strike-grid-header > [role=header-cel] > .arrow-holder {
+  position: relative;
+  left: 1rem;
+  width: 2rem;
+}
+.strike-grid-header > [role=header-cel] > .header-label {
+  width: 100%;
+  max-width: 100%;
+  display: inline-block;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.strike-grid-header > [role=header-cel] > .header-label.with-arrows {
+  width: calc(100% - 3rem);
+  max-width: calc(100% - 3rem);
+}
+
+.strike-grid-scrollbody {
+  background-color: #CCC;
+  overflow-x: visible;
+  overflow-y: scroll;
+  max-height: 100%;
+}
+
+.strike-grid-row {
+  display: contents;
+}
+.strike-grid-row > div {
+  display: flex;
+  cursor: pointer;
+  transition: all 0.16s;
+}
+.strike-grid-row.centertxt > div {
+  justify-content: center;
+  align-items: center;
+}
+.strike-grid-row:nth-child(odd) > div:nth-child(odd) {
+  background-color: #DEF;
+}
+.strike-grid-row:nth-child(odd) > div:nth-child(even) {
+  background: #e2f1ff;
+}
+.strike-grid-row:nth-child(even) > div:nth-child(odd) {
+  background-color: #ecf6ff;
+}
+.strike-grid-row:nth-child(even) > div:nth-child(even) {
+  background: #f1f8ff;
+}
+.strike-grid-row:hover:not(.selected):nth-child(odd) > div:nth-child(odd) {
+  background-color: #ffe3af;
+}
+.strike-grid-row:hover:not(.selected):nth-child(odd) > div:nth-child(even) {
+  background: #ffe5b4;
+}
+.strike-grid-row:hover:not(.selected):nth-child(even) > div:nth-child(odd) {
+  background-color: #ffe8be;
+}
+.strike-grid-row:hover:not(.selected):nth-child(even) > div:nth-child(even) {
+  background: #ffeac3;
+}
+.strike-grid-row.selected:nth-child(odd) > div:nth-child(odd) {
+  background-color: #f7c05b;
+}
+.strike-grid-row.selected:nth-child(odd) > div:nth-child(even) {
+  background: #f7c260;
+}
+.strike-grid-row.selected:nth-child(even) > div:nth-child(odd) {
+  background-color: #f8c66a;
+}
+.strike-grid-row.selected:nth-child(even) > div:nth-child(even) {
+  background: #f8c76e;
+}
+.strike-grid-row.red {
+  color: white;
+}
+.strike-grid-row.red:nth-child(odd) > div:nth-child(odd) {
+  background-color: #ea4040;
+}
+.strike-grid-row.red:nth-child(odd) > div:nth-child(even) {
+  background: #eb4545;
+}
+.strike-grid-row.red:nth-child(even) > div:nth-child(odd) {
+  background-color: #ec4e4e;
+}
+.strike-grid-row.red:nth-child(even) > div:nth-child(even) {
+  background: #ec5252;
+}
+.strike-grid-row.red.selected:nth-child(odd) > div:nth-child(odd) {
+  background-color: #cb40ea;
+}
+.strike-grid-row.red.selected:nth-child(odd) > div:nth-child(even) {
+  background: #cc45eb;
+}
+.strike-grid-row.red.selected:nth-child(even) > div:nth-child(odd) {
+  background-color: #cf4eec;
+}
+.strike-grid-row.red.selected:nth-child(even) > div:nth-child(even) {
+  background: #d052ec;
+}
+.strike-grid-row.red.selected > div {
+  border-width: 3px 0 3px 0;
+  border-color: white;
+  border-style: dotted;
+}
+.strike-grid-row.red:hover:nth-child(odd) > div:nth-child(odd) {
+  background-color: #c0c7ff;
+}
+.strike-grid-row.red:hover:nth-child(odd) > div:nth-child(even) {
+  background: #c5ccff;
+}
+.strike-grid-row.red:hover:nth-child(even) > div:nth-child(odd) {
+  background-color: #cfd5ff;
+}
+.strike-grid-row.red:hover:nth-child(even) > div:nth-child(even) {
+  background: #d4d9ff;
+}

@@ -1,0 +1,174 @@
+.strike-grid-holder {
+    max-width:100%;
+    
+    /* Normal usage. box-Sizes to the outer container, the height of which can be overridden with StrikeGrid.height: */
+    height:100%;
+
+    /* Stick to outer example. This cannot be overridden with StrikeGrid.height.
+     * Note that the outer container must have max-height defined, and overflow:scroll in this case: */
+    /* height:fit-content; */
+    
+    /* x-scrolling example. This is compatable with setting StrikeGrid.height, but NOT with automatically scaling to an outer container. 
+     * You must use fit-content: */
+    // $max-table-width: 1200px;
+    // height:fit-content;
+    // overflow:scroll;
+    // max-width: $max-table-width;
+    // > .table-container {
+    //     min-width: 800px; //something which exceeds the width of the holder.
+    //     max-width: $max-table-width;
+    // }
+    
+    transition:all .16s;
+
+    /* BarkOps/BarkBack */
+    // height:100%;
+    // overflow: scroll;
+    // > .table-container {
+    //     min-width: 600px;
+    // }
+}
+.table-container {
+    height:100%; 
+    max-width: 100%;
+    background-color:#CCC;
+    transition:all .16s;
+}
+.strike-grid {
+    display: grid;
+}
+.strike-grid-header {
+    /* sticky comes into effect if the container is larger than the content,
+        * and causes its outer container to scroll. */
+    position: sticky; 
+    top:0px;
+    z-index: 1000;
+    background-color: #344;
+}
+
+$header-color:#444;
+$header-column-lighten:6%;
+$header-color-sorting: rgb(85, 99, 177); //placed on the cels, not the header row.
+$row-color:#DEF;
+$row-column-lighten:1%;
+$row-row-lighten:3%;
+$hover-color:rgb(255, 227, 175);
+$select-color:rgb(247, 192, 91);
+
+@mixin sortGradient() {
+    $k:0;
+    @while $k <= 10 {
+        &.sort-color-#{$k} {
+            $mixColor: mix($header-color,$header-color-sorting,(10-$k)*10);
+            background-color: lighten($mixColor,$header-column-lighten);
+        }
+        $k: $k + 1;
+    }
+}
+
+$arrow-box-size:1rem;
+arrow-down {
+    display: flex;
+    font-size: .8rem;
+    height:100%;
+    align-items: center;
+    justify-content: center;
+    position:absolute;
+    top:0px;
+    &::before { content:'\27A2'; }
+    transform: rotate(90deg);
+}
+arrow-up {
+    @extend arrow-down;
+    transform: rotate(-90deg);
+}
+.strike-grid-header {
+    > [role="header-cel"] {
+        display: flex;
+        overflow: hidden;
+        align-items: center;
+        color:white;
+        width: 100%;
+        &:nth-child(odd) {
+            background-color: $header-color;
+            @include sortGradient();
+        }
+        &:nth-child(even) {
+            background-color: lighten($header-color,$header-column-lighten);
+            @include sortGradient();
+        }
+
+        > .arrow-holder {
+            position:relative;
+            left:$arrow-box-size;
+            width:$arrow-box-size * 2;
+        }
+        > .header-label {
+            width:100%;
+            max-width:100%;
+            &.with-arrows {
+                width:calc(100% - $arrow-box-size * 3);
+                max-width:calc(100% - $arrow-box-size * 3);
+            }
+            display:inline-block;
+            text-align:center;
+            overflow:hidden;
+            text-overflow:ellipsis;
+        }
+    }
+}
+.strike-grid-scrollbody {
+    background-color:#CCC;
+    overflow-x:visible;
+    overflow-y:scroll;
+    max-height: 100%;
+}
+@mixin rowMixin($baseColor) {
+    &:nth-child(odd) > div {
+        &:nth-child(odd) {
+            background-color: $baseColor;
+        }
+        &:nth-child(even) {
+            background: lighten($baseColor,$row-column-lighten);
+        }
+    }
+    &:nth-child(even) > div {
+        &:nth-child(odd) {
+            background-color: lighten($baseColor,$row-row-lighten);
+        }
+        &:nth-child(even) {
+            background: lighten(lighten($baseColor,$row-column-lighten),$row-row-lighten);
+        }
+    }
+}
+.strike-grid-row {
+    display: contents;
+    & > div {
+        display: flex;
+        cursor: pointer;
+        transition:all .16s;
+    }
+    &.centertxt > div {
+        justify-content: center;
+        align-items: center;
+    }
+    @include rowMixin($row-color);
+    &:hover:not(.selected) {
+        @include rowMixin($hover-color);
+    }
+    &.selected {
+        @include rowMixin($select-color);
+    }
+
+    &.red {
+        @include rowMixin(rgb(234, 64, 64));
+        color:white;
+        &.selected {
+            @include rowMixin(rgb(203, 64, 234));
+            > div { border-width: 3px 0 3px 0; border-color: white; border-style: dotted; }
+        }
+        &:hover {
+            @include rowMixin(rgb(192, 199, 255));
+        }
+    }
+}
