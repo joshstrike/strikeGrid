@@ -34,7 +34,7 @@
                 strB: testStrs[c],
                 difflength: { _: "Huh " + Math.abs(testStrs[c].length - testStrs[c - 1].length), s: Math.abs(testStrs[c].length - testStrs[c - 1].length) },
                 diffnum: Math.abs(testStrs[c].length - testStrs[c - 1].length),
-                _rowClasses: 'centertxt' });
+                _rowClasses: 'centertxt red' });
         }
         grid.setData(k);
         $(grid).on('rowClicked', (evt, params) => {

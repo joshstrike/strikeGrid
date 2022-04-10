@@ -33,7 +33,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         }
         get rendering() {
             let f = `<div class='strike-grid strike-grid-row ${this.rowData['_rowClasses'] || ""}' row-id='${this.rowID}'>`;
-            f += this.grid.columns.map((_c, _idx) => `<div style='z-index:${this.grid.columns.length - _idx}' row-id='${this.rowID}' col-id='${_idx}'> 
+            f += this.grid.columns.map((_c, _idx) => `<div class='${_c.params._colClasses || ""}' row-id='${this.rowID}' col-id='${_idx}'> 
                             ${_c.params.renderFromObject ? this.rowData[_c.params.handle][_c.params.renderFromObject.displayKey] :
                 this.rowData[_c.params.handle]}
                         </div>`).join('\n');
@@ -48,18 +48,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         }
     }
     class StrikeGrid extends StrikeComponent_1.StrikeComponent {
-        constructor(handle, opts) {
+        constructor(handle, _opts = {}) {
             super(handle, $(StrikeGrid.TEMPLATE_HTM));
             this.handle = handle;
-            this.opts = opts;
             this._cols = [];
             this._rows = [];
             this._currentSortCols = [];
             this._currentSelectedRowIDs = new Set();
-            if (!this.opts)
-                this.opts = { rowHeight: 30 };
-            if (!this.opts.gap)
-                this.opts.gap = { row: 1, col: 1 };
+            this.opts = Object.assign({}, StrikeGrid._DEFAULTS);
+            Object.assign(this.opts, _opts);
         }
         drawInternals() {
             return __awaiter(this, void 0, void 0, function* () {
@@ -110,12 +107,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             this.role('header scrollbody').each((_idx, _el) => {
                 $(_el).css({
                     'grid-template-columns': _widthDefs,
-                    'grid-auto-rows': `minmax(${this.opts.rowHeight + 'px' || 'auto'},auto)`,
+                    'grid-auto-rows': `minmax(${(_idx == 0 ? this.opts.headerHeight : this.opts.rowHeight) + 'px' || 'auto'},auto)`,
                     'grid-row-gap': this.opts.gap.row,
                     'grid-column-gap': this.opts.gap.col
                 });
             });
-            this.role('scrollbody').css('max-height', `calc(100% - ${this.opts.rowHeight}px)`);
+            this.role('scrollbody').css('max-height', `calc(100% - ${this.opts.headerHeight}px)`);
         }
         _setListeners() {
             this.role('header').find('[role="header-cel"][sortable="true"]').css('cursor', 'pointer').off().on('click', (evt) => {
@@ -124,24 +121,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
                 const _cscIdx = this._currentSortCols.findIndex((_csc) => _csc.handle == _colClicked.params.handle);
                 const _csc = this._currentSortCols[_cscIdx] || undefined;
                 const _sortState = _csc == undefined ? 0 : (_csc.order == 'asc' ? 1 : 2);
-                const _nextState = (_sortState + 1) % 3;
+                let _nextState;
+                if (!this.opts.multiColumnSort || _cscIdx <= 0) {
+                    _nextState = (_sortState + 1) % 3;
+                }
+                else {
+                    _nextState = _sortState;
+                }
                 if (!this.opts.multiColumnSort)
                     this._currentSortCols = [];
+                else if (_csc)
+                    this._currentSortCols.splice(_cscIdx, 1);
                 switch (_nextState) {
                     case 0:
-                        if (_csc)
-                            this._currentSortCols.splice(_cscIdx, 1);
                         break;
                     case 1:
                         this._currentSortCols.unshift({ handle: _colClicked.params.handle, order: 'asc' });
                         break;
                     case 2:
-                        if (_csc) {
-                            this._currentSortCols.splice(_cscIdx, 1);
-                            this._currentSortCols.unshift(_csc);
-                            _csc.order = 'desc';
-                            break;
-                        }
+                        this._currentSortCols.unshift({ handle: _colClicked.params.handle, order: 'desc' });
+                        break;
                 }
                 this._renderHeader();
                 this._renderBody();
@@ -165,6 +164,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
                 this._currentSelectedRowIDs.delete(rowID);
             }
             $(this.getRowByID(rowID).domElement).toggleClass('selected', _turnOn);
+            $(this).trigger('change');
         }
         get columns() {
             return (this._cols);
@@ -189,6 +189,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
                 }) || false;
             }));
         }
+        clearSelection() {
+            this._currentSelectedRowIDs.forEach((_rowID) => {
+                $(this.getRowByID(_rowID).domElement).removeClass('selected');
+            });
+            this._currentSelectedRowIDs.clear();
+        }
         get selectedRows() {
             return (Array.from(this._currentSelectedRowIDs).map((_id) => this.getRowByID(_id)));
         }
@@ -198,7 +204,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         set selectedData(match) {
             if (!this.opts.selectable)
                 return;
-            this._currentSelectedRowIDs.clear();
+            this.clearSelection();
             const _rowIDs = this.getMatchingRows(match).map((_r) => _r.rowID);
             if (this.opts.selectable != 'multi')
                 _rowIDs.length = 1;
@@ -208,15 +214,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             });
         }
         scrollToRow(rowID, animate = 0) {
-            const _scrollTarget = this.el.css('overflow') == 'scroll' ? this.el : this.role('scrollbody');
-            const _toPos = _scrollTarget.scrollTop() + $(this.getRowByID(rowID).domElement.firstChild).position().top - this.opts.rowHeight;
+            const _scrollTarget = this.role('scrollbody');
+            const _toPos = _scrollTarget.scrollTop()
+                + $(this.getRowByID(rowID).domElement.firstChild).position().top;
             if (!animate)
                 _scrollTarget.scrollTop(_toPos);
             else
                 _scrollTarget.animate({ scrollTop: _toPos }, animate);
         }
         set height(h) {
-            this.el.css('max-height', h);
+            this.el.css({ 'max-height': h, 'height': h });
             this.role('container').css('min-height', h);
         }
         set outerWidth(w) {
@@ -312,6 +319,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         }
     }
     exports.StrikeGrid = StrikeGrid;
+    StrikeGrid._DEFAULTS = {
+        headerHeight: 30,
+        rowHeight: 30,
+        multiColumnSort: true,
+        gap: { row: 1, col: 1 },
+        selectable: 'single'
+    };
     StrikeGrid.TEMPLATE_HTM = `<div id='strikeGridTemplate' class='strike-grid-holder'>
                                                 <div class='table-container' role='container'>
                                                     <div class='strike-grid strike-grid-header' role='header'></div>

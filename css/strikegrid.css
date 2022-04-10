@@ -1,22 +1,28 @@
 @charset "UTF-8";
+/* Usually, the outer container should not scroll, only the scrollbody. To accomplish this, either: 
+ * (1) Give the container outside the component .el (outside .strike-grid-holder) some defined height, and/or 
+ * (2) call StrikeGrid.height with a value.
+ */
 .strike-grid-holder {
   max-width: 100%;
-  /* Normal usage. box-Sizes to the outer container, the height of which can be overridden with StrikeGrid.height: */
+  /* Normal usage. box sizes to the outer container, the height of which can be overridden with StrikeGrid.height: */
   height: 100%;
   /* Stick to outer example. This cannot be overridden with StrikeGrid.height.
    * Note that the outer container must have max-height defined, and overflow:scroll in this case: */
   /* height:fit-content; */
-  /* x-scrolling example. This is compatable with setting StrikeGrid.height, but NOT with automatically scaling to an outer container. 
-   * You must use fit-content: */
-  transition: all 0.16s;
-  /* BarkOps/BarkBack */
+  /* x-scrolling example. This is compatable with setting StrikeGrid.height, but NOT with automatically 
+   * scaling to an outer container. */
+  overflow: scroll;
+  transition: max-width 0.16s;
+}
+.strike-grid-holder > .table-container {
+  min-width: 600px;
 }
 
 .table-container {
-  height: 100%;
   max-width: 100%;
   background-color: #CCC;
-  transition: all 0.16s;
+  transition: width 0.16s, min-width 0.16s, max-width 0.16s;
 }
 
 .strike-grid {
@@ -29,7 +35,8 @@
   position: -webkit-sticky;
   position: sticky;
   top: 0px;
-  z-index: 1000;
+  z-index: 1;
+  /* keep visible even if we're scrolling the outer container. */
   background-color: #344;
 }
 
@@ -149,6 +156,7 @@ arrow-up {
 }
 
 .strike-grid-scrollbody {
+  position: relative;
   background-color: #CCC;
   overflow-x: visible;
   overflow-y: scroll;
@@ -157,6 +165,7 @@ arrow-up {
 
 .strike-grid-row {
   display: contents;
+  color: rgb(26, 16, 5);
 }
 .strike-grid-row > div {
   display: flex;
@@ -168,31 +177,33 @@ arrow-up {
   align-items: center;
 }
 .strike-grid-row:nth-child(odd) > div:nth-child(odd) {
-  background-color: #DEF;
+  background-color: rgb(255, 227, 175);
 }
 .strike-grid-row:nth-child(odd) > div:nth-child(even) {
-  background: #e2f1ff;
-}
-.strike-grid-row:nth-child(even) > div:nth-child(odd) {
-  background-color: #ecf6ff;
-}
-.strike-grid-row:nth-child(even) > div:nth-child(even) {
-  background: #f1f8ff;
-}
-.strike-grid-row:hover:not(.selected):nth-child(odd) > div:nth-child(odd) {
-  background-color: #ffe3af;
-}
-.strike-grid-row:hover:not(.selected):nth-child(odd) > div:nth-child(even) {
   background: #ffe5b4;
 }
-.strike-grid-row:hover:not(.selected):nth-child(even) > div:nth-child(odd) {
+.strike-grid-row:nth-child(even) > div:nth-child(odd) {
   background-color: #ffe8be;
 }
-.strike-grid-row:hover:not(.selected):nth-child(even) > div:nth-child(even) {
+.strike-grid-row:nth-child(even) > div:nth-child(even) {
   background: #ffeac3;
 }
+@media (hover: hover) and (pointer: fine) {
+  .strike-grid-row:hover:not(.selected):nth-child(odd) > div:nth-child(odd) {
+    background-color: rgb(255, 227, 175);
+  }
+  .strike-grid-row:hover:not(.selected):nth-child(odd) > div:nth-child(even) {
+    background: #ffe5b4;
+  }
+  .strike-grid-row:hover:not(.selected):nth-child(even) > div:nth-child(odd) {
+    background-color: #ffe8be;
+  }
+  .strike-grid-row:hover:not(.selected):nth-child(even) > div:nth-child(even) {
+    background: #ffeac3;
+  }
+}
 .strike-grid-row.selected:nth-child(odd) > div:nth-child(odd) {
-  background-color: #f7c05b;
+  background-color: rgb(247, 192, 91);
 }
 .strike-grid-row.selected:nth-child(odd) > div:nth-child(even) {
   background: #f7c260;
@@ -207,43 +218,40 @@ arrow-up {
   color: white;
 }
 .strike-grid-row.red:nth-child(odd) > div:nth-child(odd) {
-  background-color: #ea4040;
+  background-color: rgb(215, 68, 68);
 }
 .strike-grid-row.red:nth-child(odd) > div:nth-child(even) {
-  background: #eb4545;
+  background: #d84848;
 }
 .strike-grid-row.red:nth-child(even) > div:nth-child(odd) {
-  background-color: #ec4e4e;
+  background-color: #da5151;
 }
 .strike-grid-row.red:nth-child(even) > div:nth-child(even) {
-  background: #ec5252;
+  background: #db5555;
+}
+@media (hover: hover) and (pointer: fine) {
+  .strike-grid-row.red:hover:not(.selected):nth-child(odd) > div:nth-child(odd) {
+    background-color: rgb(235, 106, 106);
+  }
+  .strike-grid-row.red:hover:not(.selected):nth-child(odd) > div:nth-child(even) {
+    background: #ec6e6e;
+  }
+  .strike-grid-row.red:hover:not(.selected):nth-child(even) > div:nth-child(odd) {
+    background-color: #ed7777;
+  }
+  .strike-grid-row.red:hover:not(.selected):nth-child(even) > div:nth-child(even) {
+    background: #ed7c7c;
+  }
 }
 .strike-grid-row.red.selected:nth-child(odd) > div:nth-child(odd) {
-  background-color: #cb40ea;
+  background-color: rgb(243, 5, 5);
 }
 .strike-grid-row.red.selected:nth-child(odd) > div:nth-child(even) {
-  background: #cc45eb;
+  background: #f80505;
 }
 .strike-grid-row.red.selected:nth-child(even) > div:nth-child(odd) {
-  background-color: #cf4eec;
+  background-color: #fa0d0d;
 }
 .strike-grid-row.red.selected:nth-child(even) > div:nth-child(even) {
-  background: #d052ec;
-}
-.strike-grid-row.red.selected > div {
-  border-width: 3px 0 3px 0;
-  border-color: white;
-  border-style: dotted;
-}
-.strike-grid-row.red:hover:nth-child(odd) > div:nth-child(odd) {
-  background-color: #c0c7ff;
-}
-.strike-grid-row.red:hover:nth-child(odd) > div:nth-child(even) {
-  background: #c5ccff;
-}
-.strike-grid-row.red:hover:nth-child(even) > div:nth-child(odd) {
-  background-color: #cfd5ff;
-}
-.strike-grid-row.red:hover:nth-child(even) > div:nth-child(even) {
-  background: #d4d9ff;
-}
+  background: #fa1212;
+}/*# sourceMappingURL=strikegrid.css.map */

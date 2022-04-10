@@ -1,6 +1,7 @@
 import { StrikeComponent } from './StrikeComponent';
 
 export type StrikeGridOptions = {
+    headerHeight?:number, 
     rowHeight?:number, 
     height?:number, 
     multiColumnSort?:boolean, 
@@ -16,7 +17,8 @@ export type StrikeGridColParams = {
     width?:string, 
     defaultOrder?:'desc'|'asc',
     sortFn?:(a:Record<string,CelData>,b:Record<string,CelData>)=>number, 
-    renderFromObject?:{displayKey:string, sortKey?:string}
+    renderFromObject?:{displayKey:string, sortKey?:string}, 
+    _colClasses?:string
 }
 
 type CelData = string | number | Record<any, string | number>;
@@ -31,7 +33,7 @@ class RowDisplay {
     public get rendering():string {
         let f:string = `<div class='strike-grid strike-grid-row ${this.rowData['_rowClasses']||""}' row-id='${this.rowID}'>`;
         f += this.grid.columns.map((_c,_idx)=>
-                        `<div style='z-index:${this.grid.columns.length-_idx}' row-id='${this.rowID}' col-id='${_idx}'> 
+                        `<div class='${_c.params._colClasses || ""}' row-id='${this.rowID}' col-id='${_idx}'> 
                             ${_c.params.renderFromObject ? this.rowData[_c.params.handle][_c.params.renderFromObject.displayKey] : 
                                                     this.rowData[_c.params.handle]}
                         </div>`).join('\n');
@@ -47,6 +49,14 @@ class RowDisplay {
 }
 
 export class StrikeGrid extends StrikeComponent {
+    protected static _DEFAULTS:StrikeGridOptions = {
+        headerHeight:30, 
+        rowHeight:30, 
+        multiColumnSort:true, 
+        gap:{row:1,col:1}, 
+        selectable:'single'
+    }
+    public opts:StrikeGridOptions;
     protected _cols:Column[] = [];
     protected _rows:RowDisplay[] = [];
     protected _data:Record<string,any>[];
@@ -60,10 +70,10 @@ export class StrikeGrid extends StrikeComponent {
                                                 </div>
                                             </div>`;
 
-    public constructor(public handle:string, public opts?:StrikeGridOptions) {
+    public constructor(public handle:string, _opts:StrikeGridOptions = {}) {
         super(handle,$(StrikeGrid.TEMPLATE_HTM));//'#strikeGridTemplate',async ()=>{ return StrikeGrid.TEMPLATE_HTM; });
-        if (!this.opts) this.opts = {rowHeight:30};
-        if (!this.opts.gap) this.opts.gap = {row:1,col:1};
+        this.opts = {...StrikeGrid._DEFAULTS};
+        Object.assign(this.opts,_opts);
     }
     protected async drawInternals():Promise<void> {
         if (this.opts.height) this.height = this.opts.height;
@@ -115,12 +125,12 @@ export class StrikeGrid extends StrikeComponent {
         this.role('header scrollbody').each((_idx, _el)=>{
             $(_el).css({
                 'grid-template-columns': _widthDefs, 
-                'grid-auto-rows': `minmax(${this.opts.rowHeight+'px' || 'auto'},auto)`, 
+                'grid-auto-rows': `minmax(${(_idx==0 ? this.opts.headerHeight : this.opts.rowHeight)+'px' || 'auto'},auto)`, 
                 'grid-row-gap': this.opts.gap.row, 
                 'grid-column-gap': this.opts.gap.col
             });
         });
-        this.role('scrollbody').css('max-height',`calc(100% - ${this.opts.rowHeight}px)`);
+        this.role('scrollbody').css('max-height',`calc(100% - ${this.opts.headerHeight}px)`);
     }
     protected _setListeners():void {
         //Header / sort listeners
@@ -130,22 +140,35 @@ export class StrikeGrid extends StrikeComponent {
             const _cscIdx:number = this._currentSortCols.findIndex((_csc)=>_csc.handle==_colClicked.params.handle);
             const _csc = this._currentSortCols[_cscIdx] || undefined;
             const _sortState:number = _csc==undefined ? 0 : (_csc.order=='asc'  ? 1 : 2);
-            const _nextState:number = (_sortState + 1) % 3;
-            if (!this.opts.multiColumnSort) this._currentSortCols = [];
+            let _nextState:number;
+            //in single column sorting, always tick through the states. In multi-column sorting, always turn on if it was off, 
+            //and increment state if it's the primary (first index). However, if it's not the first index, make it the first index 
+            //without incrementing the state on the initial click.
+            if (!this.opts.multiColumnSort || _cscIdx <= 0) {
+                _nextState = (_sortState + 1) % 3;
+            } else {
+                _nextState = _sortState;
+            }
+
+            //if only one column is lit AND this is the column we're ticking, don't unlight it.
+            if (this._currentSortCols.length==1 && this._currentSortCols[0].handle==_colClicked.params.handle && _nextState==0) {
+                _nextState = 1;
+            }
+
+            if (!this.opts.multiColumnSort) this._currentSortCols = []; //single: clear the sort columns.
+                else if (_csc) this._currentSortCols.splice(_cscIdx,1); //multi: splice out the clicked column's _cscposition, then unshift it.
             switch (_nextState) {
                 case 0:
-                    if (_csc) this._currentSortCols.splice(_cscIdx,1);
+                    //nothing to do, we already removed it.
                     break;
                 case 1:
+                    //put it at the front, ascending.
                     this._currentSortCols.unshift({handle:_colClicked.params.handle, order:'asc'});
                     break;
                 case 2:
-                    if (_csc) {
-                        this._currentSortCols.splice(_cscIdx,1);
-                        this._currentSortCols.unshift(_csc);
-                        _csc.order = 'desc';
-                        break;
-                    }
+                    //put it at the front, descending.
+                    this._currentSortCols.unshift({handle:_colClicked.params.handle, order:'desc'});
+                    break;
             }
             this._renderHeader();
             this._renderBody();
@@ -169,6 +192,7 @@ export class StrikeGrid extends StrikeComponent {
             this._currentSelectedRowIDs.delete(rowID);
         }
         $(this.getRowByID(rowID).domElement).toggleClass('selected',_turnOn);
+        $(this).trigger('change');
     }
     
     /* Utilities */
@@ -194,6 +218,12 @@ export class StrikeGrid extends StrikeComponent {
             }) || false;
         }))
     }
+    public clearSelection():void {
+        this._currentSelectedRowIDs.forEach((_rowID)=>{
+            $(this.getRowByID(_rowID).domElement).removeClass('selected');
+        })
+        this._currentSelectedRowIDs.clear();
+    }
     public get selectedRows():RowDisplay[] {
         return (Array.from(this._currentSelectedRowIDs).map((_id)=>this.getRowByID(_id)));
     }
@@ -202,7 +232,7 @@ export class StrikeGrid extends StrikeComponent {
     }
     public set selectedData(match:Record<string,any>[]) {
         if (!this.opts.selectable) return;
-        this._currentSelectedRowIDs.clear();
+        this.clearSelection();
         const _rowIDs:number[] = this.getMatchingRows(match).map((_r)=>_r.rowID);
         if (this.opts.selectable!='multi') _rowIDs.length = 1;
         _rowIDs.forEach((_id)=>{
@@ -214,13 +244,14 @@ export class StrikeGrid extends StrikeComponent {
         //Note that if we're using x-scrolling, we need to put the overflow on the .el instead of scrollbody; in that case we scroll the whole .el, 
         //and the header sticks inside any containing element (or the document.body). Otherwise the header just sitsn there and we scroll the 
         //scrollbody alone.
-        const _scrollTarget:JQuery<HTMLElement> = this.el.css('overflow')=='scroll' ? this.el : this.role('scrollbody');
-        const _toPos:number = _scrollTarget.scrollTop() + $(this.getRowByID(rowID).domElement.firstChild).position().top - this.opts.rowHeight;
+        const _scrollTarget:JQuery<HTMLElement> = this.role('scrollbody');
+        const _toPos:number = _scrollTarget.scrollTop() 
+                                + $(this.getRowByID(rowID).domElement.firstChild).position().top;
         if (!animate) _scrollTarget.scrollTop(_toPos);
         else _scrollTarget.animate({scrollTop:_toPos},animate);
     }
     public set height(h:number) {
-        this.el.css('max-height',h);
+        this.el.css({'max-height':h, 'height':h});
         this.role('container').css('min-height',h);
     }
     public set outerWidth(w:number) {

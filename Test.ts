@@ -24,7 +24,7 @@ grid.init($('#someElement')).then((res:any)=>{
                 strB:testStrs[c],
                 difflength:{_:"Huh "+Math.abs(testStrs[c].length-testStrs[c-1].length),s:Math.abs(testStrs[c].length-testStrs[c-1].length)},
                 diffnum:Math.abs(testStrs[c].length-testStrs[c-1].length),
-                _rowClasses:'centertxt'});
+                _rowClasses:'centertxt red'});
     }
 
     //grid._currentSortCols = [{handle:'strA',order:'asc'},{handle:'difflength',order:'desc'},{handle:'strB',order:'asc'}];

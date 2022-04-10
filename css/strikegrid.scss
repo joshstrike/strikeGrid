@@ -1,38 +1,31 @@
-.strike-grid-holder {
+/* Usually, the outer container should not scroll, only the scrollbody. To accomplish this, either: 
+ * (1) Give the container outside the component .el (outside .strike-grid-holder) some defined height, and/or 
+ * (2) call StrikeGrid.height with a value.
+ */
+
+ .strike-grid-holder {
     max-width:100%;
-    
-    /* Normal usage. box-Sizes to the outer container, the height of which can be overridden with StrikeGrid.height: */
+
+    /* Normal usage. box sizes to the outer container, the height of which can be overridden with StrikeGrid.height: */
     height:100%;
 
     /* Stick to outer example. This cannot be overridden with StrikeGrid.height.
      * Note that the outer container must have max-height defined, and overflow:scroll in this case: */
     /* height:fit-content; */
-    
-    /* x-scrolling example. This is compatable with setting StrikeGrid.height, but NOT with automatically scaling to an outer container. 
-     * You must use fit-content: */
-    // $max-table-width: 1200px;
-    // height:fit-content;
-    // overflow:scroll;
-    // max-width: $max-table-width;
-    // > .table-container {
-    //     min-width: 800px; //something which exceeds the width of the holder.
-    //     max-width: $max-table-width;
-    // }
-    
-    transition:all .16s;
 
-    /* BarkOps/BarkBack */
-    // height:100%;
-    // overflow: scroll;
-    // > .table-container {
-    //     min-width: 600px;
-    // }
+    /* x-scrolling example. This is compatable with setting StrikeGrid.height, but NOT with automatically 
+     * scaling to an outer container. */
+    overflow: scroll;
+    > .table-container {
+        min-width: 600px;
+    }
+        
+    transition:max-width .16s;
 }
 .table-container {
-    height:100%; 
     max-width: 100%;
     background-color:#CCC;
-    transition:all .16s;
+    transition:width .16s, min-width .16s, max-width .16s;
 }
 .strike-grid {
     display: grid;
@@ -42,18 +35,19 @@
         * and causes its outer container to scroll. */
     position: sticky; 
     top:0px;
-    z-index: 1000;
+    z-index:1; /* keep visible even if we're scrolling the outer container. */
     background-color: #344;
 }
 
 $header-color:#444;
 $header-column-lighten:6%;
 $header-color-sorting: rgb(85, 99, 177); //placed on the cels, not the header row.
-$row-color:#DEF;
+$default-text-color:rgb(26, 16, 5);
+$default-row-color:#DEF;
+$default-hover-color:rgb(255, 227, 175);
+$default-select-color:rgb(247, 192, 91);
 $row-column-lighten:1%;
 $row-row-lighten:3%;
-$hover-color:rgb(255, 227, 175);
-$select-color:rgb(247, 192, 91);
 
 @mixin sortGradient() {
     $k:0;
@@ -118,12 +112,13 @@ arrow-up {
     }
 }
 .strike-grid-scrollbody {
+    position:relative;
     background-color:#CCC;
     overflow-x:visible;
     overflow-y:scroll;
-    max-height: 100%;
+    max-height:100%;
 }
-@mixin rowMixin($baseColor) {
+@mixin alternateColors($baseColor) {
     &:nth-child(odd) > div {
         &:nth-child(odd) {
             background-color: $baseColor;
@@ -141,6 +136,25 @@ arrow-up {
         }
     }
 }
+@mixin hoverDevice {
+    @media (hover: hover) and (pointer: fine) {
+        &:hover {
+            @content;
+        }
+    }
+}
+@mixin colorScheme($text,$base,$hover,$select) {
+    color:$text;
+    @include alternateColors($base);
+    @include hoverDevice {
+        &:not(.selected) {
+            @include alternateColors($hover);
+        }
+    }
+    &.selected {
+        @include alternateColors($select);
+    }
+}
 .strike-grid-row {
     display: contents;
     & > div {
@@ -152,23 +166,13 @@ arrow-up {
         justify-content: center;
         align-items: center;
     }
-    @include rowMixin($row-color);
-    &:hover:not(.selected) {
-        @include rowMixin($hover-color);
-    }
-    &.selected {
-        @include rowMixin($select-color);
-    }
 
-    &.red {
-        @include rowMixin(rgb(234, 64, 64));
-        color:white;
-        &.selected {
-            @include rowMixin(rgb(203, 64, 234));
-            > div { border-width: 3px 0 3px 0; border-color: white; border-style: dotted; }
-        }
-        &:hover {
-            @include rowMixin(rgb(192, 199, 255));
+    @include colorScheme($default-text-color,$default-hover-color, $default-hover-color, $default-select-color);
+    
+    $alternate-colors: ('red':(white,rgb(215, 68, 68),rgb(235, 106, 106),rgb(243, 5, 5)));
+    @each $k, $v in $alternate-colors {
+        &.#{$k} {
+            @include colorScheme(nth($v,1),nth($v,2),nth($v,3),nth($v,4));
         }
     }
 }
