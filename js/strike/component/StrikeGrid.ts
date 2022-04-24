@@ -10,26 +10,26 @@ export type StrikeGridOptions = {
     reselectionKey?:string
 }
 
-export type StrikeGridColParams = {
+export type StrikeGridColParams<T> = {
     handle:string, 
     label:string, 
     sortable?:boolean, 
     width?:string, 
     defaultOrder?:'desc'|'asc',
-    sortFn?:(a:Record<string,CelData>,b:Record<string,CelData>)=>number, 
+    sortFn?:(a:T,b:T)=>number, 
     renderFromObject?:{displayKey:string, sortKey?:string}, 
     _colClasses?:string
 }
 
 type CelData = string | number | Record<any, string | number>;
-type RowData = Record<string, CelData>;
+type RowData<T> = T;
 
-class Column {
-    public constructor(public params:StrikeGridColParams) {}
+class Column<T> {
+    public constructor(public params:StrikeGridColParams<T>) {}
 }
 
-class RowDisplay {
-    public constructor(public grid:StrikeGrid, public rowData:RowData, public rowID:number) {}
+class RowDisplay<T> {
+    public constructor(public grid:StrikeGrid<any>, public rowData:RowData<T>, public rowID:number) {}
     public get rendering():string {
         let f:string = `<div class='strike-grid strike-grid-row ${this.rowData['_rowClasses']||""}' row-id='${this.rowID}'>`;
         f += this.grid.columns.map((_c,_idx)=>
@@ -44,11 +44,11 @@ class RowDisplay {
         return (this.grid.rows.indexOf(this));
     }
     public get domElement():HTMLElement {
-        return (this.grid.el.find(`[row-id="${this.rowID}"]`)[0]);
+        return (this.grid.el.find(`.strike-grid-row[row-id="${this.rowID}"]`)[0]);
     }
 }
 
-export class StrikeGrid extends StrikeComponent {
+export class StrikeGrid<T> extends StrikeComponent {
     protected static _DEFAULTS:StrikeGridOptions = {
         headerHeight:30, 
         rowHeight:30, 
@@ -57,9 +57,9 @@ export class StrikeGrid extends StrikeComponent {
         selectable:'single'
     }
     public opts:StrikeGridOptions;
-    protected _cols:Column[] = [];
-    protected _rows:RowDisplay[] = [];
-    protected _data:Record<string,any>[];
+    protected _cols:Column<T>[] = [];
+    protected _rows:RowDisplay<T>[] = [];
+    protected _data:T[];
     public _currentSortCols:{handle:string,order:'desc'|'asc'}[] = [];
     protected _currentSelectedRowIDs:Set<number> = new Set();
 
@@ -78,20 +78,20 @@ export class StrikeGrid extends StrikeComponent {
     protected async drawInternals():Promise<void> {
         if (this.opts.height) this.height = this.opts.height;
     }
-    public setColumns(colParams:StrikeGridColParams[],defaultSortHandle?:string) {
+    public setColumns(colParams:StrikeGridColParams<T>[],defaultSortHandle?:string) {
         //remove sort columns that no longer exist in the new column set:
         this._currentSortCols = this._currentSortCols.filter((_csc)=>colParams.find((_col)=>_col.handle==_csc.handle)!=undefined);
 
         if (!this._currentSortCols.length) {
             if (!defaultSortHandle) {
                 //If no default sort handle was passed, resort to the first column that's sortable, if any.
-                const _firstSortableCol:StrikeGridColParams = colParams.find((_c)=>_c.sortable==true);
+                const _firstSortableCol:StrikeGridColParams<T> = colParams.find((_c)=>_c.sortable==true);
                 if (_firstSortableCol !== undefined) {
                     defaultSortHandle = _firstSortableCol.handle;
                 }
             }
             if (defaultSortHandle) {
-                let _defaultSortCol:StrikeGridColParams = colParams.find((_c)=>_c.handle==defaultSortHandle);
+                let _defaultSortCol:StrikeGridColParams<T> = colParams.find((_c)=>_c.handle==defaultSortHandle);
                 if (_defaultSortCol === undefined) throw new Error(`Error in setColumns(): default sort column ${defaultSortHandle} is not defined.`);
                 this._currentSortCols = [{handle:_defaultSortCol.handle, order:_defaultSortCol.defaultOrder || 'asc'}];
             }
@@ -102,7 +102,7 @@ export class StrikeGrid extends StrikeComponent {
         this._renderHeader();
         if (this._data) this._renderBody();
     }
-    public setData(d:Record<string,any>[]):void {
+    public setData(d:T[]):void {
         //Collect prior selected values from the rowIDs if reselectionKey is specified. This must be a unique ID in the data!
         let _reselectVals:(string|number)[] = [];
         if (this.opts.reselectionKey && this._currentSelectedRowIDs.size) {
@@ -111,9 +111,9 @@ export class StrikeGrid extends StrikeComponent {
         }
         this._currentSelectedRowIDs.clear();
         this._data = d;
-        this._rows = this._data.map((_d, _idx)=>new RowDisplay(this, _d, _idx));
+        this._rows = this._data.map((_d, _idx)=>new RowDisplay(this, <any>_d, _idx));
         _reselectVals.forEach((_val)=>{
-            const _rowFound:RowDisplay = this._rows.find((_r)=>_r.rowData[this.opts.reselectionKey]==_val);
+            const _rowFound:RowDisplay<T> = this._rows.find((_r)=>_r.rowData[this.opts.reselectionKey]==_val);
             if (_rowFound!==undefined) this._currentSelectedRowIDs.add(_rowFound.rowID);
         });
         this._renderBody();
@@ -136,7 +136,7 @@ export class StrikeGrid extends StrikeComponent {
         //Header / sort listeners
         this.role('header').find('[role="header-cel"][sortable="true"]').css('cursor','pointer').off().on('click',(evt:JQuery.Event)=>{
             const _colClickedID:number = parseInt($(evt.currentTarget).attr('col-id'));
-            const _colClicked:Column = this._cols[_colClickedID];
+            const _colClicked:Column<T> = this._cols[_colClickedID];
             const _cscIdx:number = this._currentSortCols.findIndex((_csc)=>_csc.handle==_colClicked.params.handle);
             const _csc = this._currentSortCols[_cscIdx] || undefined;
             const _sortState:number = _csc==undefined ? 0 : (_csc.order=='asc'  ? 1 : 2);
@@ -196,19 +196,19 @@ export class StrikeGrid extends StrikeComponent {
     }
     
     /* Utilities */
-    public get columns():Column[] {
+    public get columns():Column<T>[] {
         return (this._cols);
     }
-    public get rows():RowDisplay[] {
+    public get rows():RowDisplay<T>[] {
         return (this._rows);
     }
-    public getRowByID(uid:number):RowDisplay {
+    public getRowByID(uid:number):RowDisplay<T> {
         return (this._rows.find((_r)=>_r.rowID==uid));
     }
     public getDataByID(id:number):Record<string,any> {
         return (this._data[id]);
     }
-    public getMatchingRows(match:Record<string,any>[]):RowDisplay[] {
+    public getMatchingRows(match:Record<string,any>[]):RowDisplay<T>[] {
         return (this._rows.filter((_r)=>{
             return match.find((_m)=>{
                 for (let _k of Object.keys(_m)) {
@@ -224,13 +224,13 @@ export class StrikeGrid extends StrikeComponent {
         })
         this._currentSelectedRowIDs.clear();
     }
-    public get selectedRows():RowDisplay[] {
+    public get selectedRows():RowDisplay<T>[] {
         return (Array.from(this._currentSelectedRowIDs).map((_id)=>this.getRowByID(_id)));
     }
-    public get selectedData():Record<string,any>[] {
+    public get selectedData():T[] {
         return (this.selectedRows.map((_row)=>_row.rowData));
     }
-    public set selectedData(match:Record<string,any>[]) {
+    public set selectedData(match:T[]) {
         if (!this.opts.selectable) return;
         this.clearSelection();
         const _rowIDs:number[] = this.getMatchingRows(match).map((_r)=>_r.rowID);
@@ -250,20 +250,20 @@ export class StrikeGrid extends StrikeComponent {
         if (!animate) _scrollTarget.scrollTop(_toPos);
         else _scrollTarget.animate({scrollTop:_toPos},animate);
     }
-    public set height(h:number) {
+    public set height(h:string|number) {
         this.el.css({'max-height':h, 'height':h});
         this.role('container').css('min-height',h);
     }
-    public set outerWidth(w:number) {
+    public set outerWidth(w:string|number) {
         this.el.css('max-width',w);
     }
-    public set innerWidth(w:number) {
+    public set innerWidth(w:string|number) {
         this.role('container').css({'max-width':w,'width':w,'min-width':w});
     }
 
     /* Rendering */
     protected _sortRows():void {
-        const _csc:{col:Column,order:'desc'|'asc'}[] = this._currentSortCols.map(({handle,order})=>{
+        const _csc:{col:Column<T>,order:'desc'|'asc'}[] = this._currentSortCols.map(({handle,order})=>{
             return {col:this._cols.find((_c)=>_c.params.handle==handle), order:order}
         });
         if (!_csc.length) return; //no sorted columns;

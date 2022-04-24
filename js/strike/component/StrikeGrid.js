@@ -44,7 +44,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             return (this.grid.rows.indexOf(this));
         }
         get domElement() {
-            return (this.grid.el.find(`[row-id="${this.rowID}"]`)[0]);
+            return (this.grid.el.find(`.strike-grid-row[row-id="${this.rowID}"]`)[0]);
         }
     }
     class StrikeGrid extends StrikeComponent_1.StrikeComponent {
@@ -127,6 +127,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
                 }
                 else {
                     _nextState = _sortState;
+                }
+                if (this._currentSortCols.length == 1 && this._currentSortCols[0].handle == _colClicked.params.handle && _nextState == 0) {
+                    _nextState = 1;
                 }
                 if (!this.opts.multiColumnSort)
                     this._currentSortCols = [];

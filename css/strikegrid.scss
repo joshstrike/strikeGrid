@@ -15,9 +15,10 @@
 
     /* x-scrolling example. This is compatable with setting StrikeGrid.height, but NOT with automatically 
      * scaling to an outer container. */
-    overflow: scroll;
+    overflow-x: scroll;
+    overflow-y: hidden;
     > .table-container {
-        min-width: 600px;
+        //min-width: 600px;
     }
         
     transition:max-width .16s;
@@ -30,22 +31,14 @@
 .strike-grid {
     display: grid;
 }
-.strike-grid-header {
-    /* sticky comes into effect if the container is larger than the content,
-        * and causes its outer container to scroll. */
-    position: sticky; 
-    top:0px;
-    z-index:1; /* keep visible even if we're scrolling the outer container. */
-    background-color: #344;
-}
 
 $header-color:#444;
 $header-column-lighten:6%;
 $header-color-sorting: rgb(85, 99, 177); //placed on the cels, not the header row.
 $default-text-color:rgb(26, 16, 5);
-$default-row-color:#DEF;
-$default-hover-color:rgb(255, 227, 175);
-$default-select-color:rgb(247, 192, 91);
+$default-row-color:rgb(235, 235, 235);
+$default-hover-color:rgb(205, 212, 224);
+$default-select-color:rgb(183, 183, 183);
 $row-column-lighten:1%;
 $row-row-lighten:3%;
 
@@ -77,6 +70,14 @@ arrow-up {
     transform: rotate(-90deg);
 }
 .strike-grid-header {
+    /* sticky comes into effect if the container is larger than the content,
+    * and causes its outer container to scroll. */
+    position: sticky; 
+    top:0px;
+    z-index:1; /* keep visible even if we're scrolling the outer container. */
+    background-color: #344;
+    white-space:nowrap;
+    
     > [role="header-cel"] {
         display: flex;
         overflow: hidden;
@@ -155,6 +156,10 @@ arrow-up {
         @include alternateColors($select);
     }
 }
+
+$alternate-grid-colors: ('red':(white,rgb(215, 68, 68),rgb(235, 106, 106),rgb(243, 5, 5)), 
+                        'amber':(white,rgb(221, 184, 51),rgb(222, 191, 78),orange), 
+                        'blue':(white,rgb(86, 86, 214),rgb(113, 113, 216),rgb(88, 88, 216)));
 .strike-grid-row {
     display: contents;
     & > div {
@@ -167,12 +172,21 @@ arrow-up {
         align-items: center;
     }
 
-    @include colorScheme($default-text-color,$default-hover-color, $default-hover-color, $default-select-color);
+    @include colorScheme($default-text-color,$default-row-color, $default-hover-color, $default-select-color);
     
-    $alternate-colors: ('red':(white,rgb(215, 68, 68),rgb(235, 106, 106),rgb(243, 5, 5)));
-    @each $k, $v in $alternate-colors {
+    @each $k, $v in $alternate-grid-colors {
         &.#{$k} {
             @include colorScheme(nth($v,1),nth($v,2),nth($v,3),nth($v,4));
         }
+    }
+
+    &.blur > div {
+        -webkit-filter:blur(3px);
+        -moz-filter:blur(3px);
+        filter:blur(3px);
+        
+        transition: -webkit-filter 1s ease;
+        transition: -moz-filter 1s ease;
+        transition: filter 1s ease;
     }
 }

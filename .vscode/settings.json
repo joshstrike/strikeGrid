@@ -1,0 +1,13 @@
+{
+    //"liveSassCompile.settings.forceBaseDirectory": "/public_html/client/scss",
+    "liveSassCompile.settings.formats": [
+        {
+            "format": "expanded",
+            "extensionName": ".css",
+            "savePath": "/public_html/client/css",
+            "savePathSegmentKeys": null,
+            "savePathReplaceSegmentsWith": null
+        }
+    ],
+    "liveSassCompile.settings.includeItems": ["/css/strikegrid.scss"]
+}

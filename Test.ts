@@ -1,6 +1,6 @@
 import { StrikeGrid } from "./js/strike/component/StrikeGrid";
 
-const grid = new StrikeGrid('testGrid',{rowHeight:40,/* height:800, */multiColumnSort:true,selectable:'multi',reselectionKey:'id'});
+const grid = new StrikeGrid<any>('testGrid',{rowHeight:40,/* height:800, */multiColumnSort:true,selectable:'multi',reselectionKey:'id'});
 window['grid'] = grid;
 grid.init($('#someElement')).then((res:any)=>{
     grid.setColumns([
