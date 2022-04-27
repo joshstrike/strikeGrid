@@ -4,8 +4,7 @@
 		"lib": [ "esnext", "dom", "dom.iterable" ],
 		"module": "esnext",
 		"moduleResolution":"Node",
-		"removeComments": true,
-		"paths": {"*":["./*.js"]}
+		"removeComments": true
 	},
 	"compileOnSave": true,
 	"buildOnSave": true
