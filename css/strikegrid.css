@@ -12,13 +12,10 @@
   /* height:fit-content; */
   /* x-scrolling example. This is compatable with setting StrikeGrid.height, but NOT with automatically 
    * scaling to an outer container. */
-  overflow: scroll;
+  overflow-x: scroll;
+  overflow-y: hidden;
   transition: max-width 0.16s;
 }
-.strike-grid-holder > .table-container {
-  min-width: 600px;
-}
-
 .table-container {
   max-width: 100%;
   background-color: #CCC;
@@ -27,17 +24,6 @@
 
 .strike-grid {
   display: grid;
-}
-
-.strike-grid-header {
-  /* sticky comes into effect if the container is larger than the content,
-      * and causes its outer container to scroll. */
-  position: -webkit-sticky;
-  position: sticky;
-  top: 0px;
-  z-index: 1;
-  /* keep visible even if we're scrolling the outer container. */
-  background-color: #344;
 }
 
 arrow-down, arrow-up {
@@ -58,6 +44,17 @@ arrow-up {
   transform: rotate(-90deg);
 }
 
+.strike-grid-header {
+  /* sticky comes into effect if the container is larger than the content,
+  * and causes its outer container to scroll. */
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0px;
+  z-index: 1;
+  /* keep visible even if we're scrolling the outer container. */
+  background-color: #344;
+  white-space: nowrap;
+}
 .strike-grid-header > [role=header-cel] {
   display: flex;
   overflow: hidden;
@@ -177,42 +174,42 @@ arrow-up {
   align-items: center;
 }
 .strike-grid-row:nth-child(odd) > div:nth-child(odd) {
-  background-color: rgb(255, 227, 175);
+  background-color: rgb(235, 235, 235);
 }
 .strike-grid-row:nth-child(odd) > div:nth-child(even) {
-  background: #ffe5b4;
+  background: #eeeeee;
 }
 .strike-grid-row:nth-child(even) > div:nth-child(odd) {
-  background-color: #ffe8be;
+  background-color: #f3f3f3;
 }
 .strike-grid-row:nth-child(even) > div:nth-child(even) {
-  background: #ffeac3;
+  background: whitesmoke;
 }
 @media (hover: hover) and (pointer: fine) {
   .strike-grid-row:hover:not(.selected):nth-child(odd) > div:nth-child(odd) {
-    background-color: rgb(255, 227, 175);
+    background-color: rgb(205, 212, 224);
   }
   .strike-grid-row:hover:not(.selected):nth-child(odd) > div:nth-child(even) {
-    background: #ffe5b4;
+    background: #d0d7e2;
   }
   .strike-grid-row:hover:not(.selected):nth-child(even) > div:nth-child(odd) {
-    background-color: #ffe8be;
+    background-color: #d6dce6;
   }
   .strike-grid-row:hover:not(.selected):nth-child(even) > div:nth-child(even) {
-    background: #ffeac3;
+    background: #dadfe8;
   }
 }
 .strike-grid-row.selected:nth-child(odd) > div:nth-child(odd) {
-  background-color: rgb(247, 192, 91);
+  background-color: rgb(183, 183, 183);
 }
 .strike-grid-row.selected:nth-child(odd) > div:nth-child(even) {
-  background: #f7c260;
+  background: #bababa;
 }
 .strike-grid-row.selected:nth-child(even) > div:nth-child(odd) {
-  background-color: #f8c66a;
+  background-color: #bfbfbf;
 }
 .strike-grid-row.selected:nth-child(even) > div:nth-child(even) {
-  background: #f8c76e;
+  background: #c1c1c1;
 }
 .strike-grid-row.red {
   color: white;
@@ -254,4 +251,92 @@ arrow-up {
 }
 .strike-grid-row.red.selected:nth-child(even) > div:nth-child(even) {
   background: #fa1212;
-}/*# sourceMappingURL=strikegrid.css.map */
+}
+.strike-grid-row.amber {
+  color: white;
+}
+.strike-grid-row.amber:nth-child(odd) > div:nth-child(odd) {
+  background-color: rgb(221, 184, 51);
+}
+.strike-grid-row.amber:nth-child(odd) > div:nth-child(even) {
+  background: #deba37;
+}
+.strike-grid-row.amber:nth-child(even) > div:nth-child(odd) {
+  background-color: #dfbd40;
+}
+.strike-grid-row.amber:nth-child(even) > div:nth-child(even) {
+  background: #e0be44;
+}
+@media (hover: hover) and (pointer: fine) {
+  .strike-grid-row.amber:hover:not(.selected):nth-child(odd) > div:nth-child(odd) {
+    background-color: rgb(222, 191, 78);
+  }
+  .strike-grid-row.amber:hover:not(.selected):nth-child(odd) > div:nth-child(even) {
+    background: #dfc152;
+  }
+  .strike-grid-row.amber:hover:not(.selected):nth-child(even) > div:nth-child(odd) {
+    background-color: #e0c45b;
+  }
+  .strike-grid-row.amber:hover:not(.selected):nth-child(even) > div:nth-child(even) {
+    background: #e1c55f;
+  }
+}
+.strike-grid-row.amber.selected:nth-child(odd) > div:nth-child(odd) {
+  background-color: orange;
+}
+.strike-grid-row.amber.selected:nth-child(odd) > div:nth-child(even) {
+  background: #ffa705;
+}
+.strike-grid-row.amber.selected:nth-child(even) > div:nth-child(odd) {
+  background-color: #ffaa0f;
+}
+.strike-grid-row.amber.selected:nth-child(even) > div:nth-child(even) {
+  background: #ffac14;
+}
+.strike-grid-row.blue {
+  color: white;
+}
+.strike-grid-row.blue:nth-child(odd) > div:nth-child(odd) {
+  background-color: rgb(86, 86, 214);
+}
+.strike-grid-row.blue:nth-child(odd) > div:nth-child(even) {
+  background: #5a5ad7;
+}
+.strike-grid-row.blue:nth-child(even) > div:nth-child(odd) {
+  background-color: #6262d9;
+}
+.strike-grid-row.blue:nth-child(even) > div:nth-child(even) {
+  background: #6666da;
+}
+@media (hover: hover) and (pointer: fine) {
+  .strike-grid-row.blue:hover:not(.selected):nth-child(odd) > div:nth-child(odd) {
+    background-color: rgb(113, 113, 216);
+  }
+  .strike-grid-row.blue:hover:not(.selected):nth-child(odd) > div:nth-child(even) {
+    background: #7575d9;
+  }
+  .strike-grid-row.blue:hover:not(.selected):nth-child(even) > div:nth-child(odd) {
+    background-color: #7d7ddb;
+  }
+  .strike-grid-row.blue:hover:not(.selected):nth-child(even) > div:nth-child(even) {
+    background: #8181dc;
+  }
+}
+.strike-grid-row.blue.selected:nth-child(odd) > div:nth-child(odd) {
+  background-color: rgb(12, 12, 207);
+}
+.strike-grid-row.blue.selected:nth-child(odd) > div:nth-child(even) {
+  background: #0c0cd4;
+}
+.strike-grid-row.blue.selected:nth-child(even) > div:nth-child(odd) {
+  background-color: #0d0ddd;
+}
+.strike-grid-row.blue.selected:nth-child(even) > div:nth-child(even) {
+  background: #0d0de2;
+}
+.strike-grid-row.blur > div {
+  -moz-filter: blur(3px);
+  filter: blur(3px);
+  transition: -moz-filter 1s ease;
+  transition: filter 1s ease;
+}

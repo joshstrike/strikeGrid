@@ -1,3 +1,17 @@
+$header-color:#444;
+$header-column-lighten:6%;
+$header-color-sorting: rgb(85, 99, 177); //placed on the cels, not the header row.
+$default-text-color:rgb(26, 16, 5);
+$default-row-color:rgb(235, 235, 235);
+$default-hover-color:rgb(205, 212, 224);
+$default-select-color:rgb(183, 183, 183);
+$row-column-lighten:1%;
+$row-row-lighten:3%;
+
+$alternate-grid-colors: ('red':(white,rgb(215, 68, 68),rgb(235, 106, 106),rgb(243, 5, 5)), 
+                        'amber':(white,rgb(221, 184, 51),rgb(222, 191, 78),orange), 
+                        'blue':(white,rgb(86, 86, 214),rgb(113, 113, 216),rgb(12, 12, 207)));
+
 /* Usually, the outer container should not scroll, only the scrollbody. To accomplish this, either: 
  * (1) Give the container outside the component .el (outside .strike-grid-holder) some defined height, and/or 
  * (2) call StrikeGrid.height with a value.
@@ -31,16 +45,6 @@
 .strike-grid {
     display: grid;
 }
-
-$header-color:#444;
-$header-column-lighten:6%;
-$header-color-sorting: rgb(85, 99, 177); //placed on the cels, not the header row.
-$default-text-color:rgb(26, 16, 5);
-$default-row-color:rgb(235, 235, 235);
-$default-hover-color:rgb(205, 212, 224);
-$default-select-color:rgb(183, 183, 183);
-$row-column-lighten:1%;
-$row-row-lighten:3%;
 
 @mixin sortGradient() {
     $k:0;
@@ -157,9 +161,6 @@ arrow-up {
     }
 }
 
-$alternate-grid-colors: ('red':(white,rgb(215, 68, 68),rgb(235, 106, 106),rgb(243, 5, 5)), 
-                        'amber':(white,rgb(221, 184, 51),rgb(222, 191, 78),orange), 
-                        'blue':(white,rgb(86, 86, 214),rgb(113, 113, 216),rgb(88, 88, 216)));
 .strike-grid-row {
     display: contents;
     & > div {

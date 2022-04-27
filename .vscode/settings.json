@@ -4,7 +4,7 @@
         {
             "format": "expanded",
             "extensionName": ".css",
-            "savePath": "/public_html/client/css",
+            "savePath": "/css",
             "savePathSegmentKeys": null,
             "savePathReplaceSegmentsWith": null
         }

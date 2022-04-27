@@ -1,10 +1,11 @@
 {
 	"compilerOptions": {
-		"target": "es6",
-		"lib": [ "es6", "dom", "dom.iterable" ],
-		"module": "umd",
-		"moduleResolution": "node",
-		"removeComments": true
+		"target": "esnext",
+		"lib": [ "esnext", "dom", "dom.iterable" ],
+		"module": "esnext",
+		"moduleResolution":"Node",
+		"removeComments": true,
+		"paths": {"*":["./*.js"]}
 	},
 	"compileOnSave": true,
 	"buildOnSave": true
