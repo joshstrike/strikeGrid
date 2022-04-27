@@ -271,7 +271,6 @@ export class StrikeGrid<T> extends EventTarget {
             const _easeOut:number = 3;
             const _origDist:number = _toPos - _scrollTarget.scrollTop;
             let _c:number = 0;
-            let ff:number = Date.now();
             let f = setInterval(()=>{
                 _scrollTarget.scrollTop += 
                     (_toPos - _scrollTarget.scrollTop)/((animate/(_refresh*_easeOut)) - (_c/_easeOut));
@@ -279,7 +278,6 @@ export class StrikeGrid<T> extends EventTarget {
                 if (_c > animate/_refresh || Math.abs(_toPos - _scrollTarget.scrollTop) < 3) {
                     _scrollTarget.scrollTo({top:_toPos});
                     clearInterval(f);
-                    console.log('ended at',(Date.now()-ff));
                 }
                 _c++;
             },_refresh);

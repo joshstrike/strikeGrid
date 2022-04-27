@@ -44,7 +44,7 @@ export class Test {
         });
 
         this.grid.selectedData = [{strA:'single'}];
-        this.grid.scrollToRow(this.grid.selectedRows[0].rowID,3000);
+        this.grid.scrollToRow(this.grid.selectedRows[0].rowID,300);
     }
 }
 
