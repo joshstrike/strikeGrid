@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"target": "esnext",
 		"lib": [ "esnext", "dom", "dom.iterable" ],
-		"module": "esnext",
+		"module": "UMD",
 		"moduleResolution":"Node",
 		"removeComments": true
 	},
