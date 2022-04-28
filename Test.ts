@@ -1,3 +1,4 @@
+try {window.require(<any>['./css/strikegrid.css'])} catch (e){};
 import { StrikeGrid } from "./js/strike/component/StrikeGrid.js";
 
 type TestData = {id:number,strA:string,strB:string,difflength:{_,s},diffnum:number,_rowClasses:string};

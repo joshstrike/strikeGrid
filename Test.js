@@ -1,3 +1,8 @@
+try {
+    window.require(['./css/strikegrid.css']);
+}
+catch (e) { }
+;
 import { StrikeGrid } from "./js/strike/component/StrikeGrid.js";
 export class Test {
     grid;
