@@ -123,7 +123,6 @@ export class StrikeGrid extends EventTarget {
         this.role('header').find('[role="header-cel"][sortable="true"]').css({ 'cursor': 'pointer' });
         this.el.querySelectorAll('[role="header-cel"][sortable="true"]').forEach((_el) => _el.addEventListener('click', (evt) => {
             const _colClickedID = parseInt(evt.currentTarget.getAttribute('col-id'));
-            console.log('_colClickedID', _colClickedID);
             const _colClicked = this._cols[_colClickedID];
             const _cscIdx = this._currentSortCols.findIndex((_csc) => _csc.handle == _colClicked.params.handle);
             const _csc = this._currentSortCols[_cscIdx] || undefined;

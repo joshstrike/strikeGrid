@@ -10,7 +10,7 @@
 			],
 			"group": "build",
 			"label": "TSC: STRIKEGRID",
-			"runOptions": {"runOn": "folderOpen"}
+			"runOptions": {"runOn": "default"}
 		}
 	]
 }

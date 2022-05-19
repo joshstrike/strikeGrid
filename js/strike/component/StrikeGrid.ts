@@ -144,7 +144,6 @@ export class StrikeGrid<T> extends EventTarget {
 
         this.el.querySelectorAll('[role="header-cel"][sortable="true"]').forEach((_el)=>_el.addEventListener('click',(evt)=>{          
             const _colClickedID:number = parseInt((<HTMLElement>evt.currentTarget).getAttribute('col-id'));
-            console.log('_colClickedID',_colClickedID);
             const _colClicked:Column<T> = this._cols[_colClickedID];
             const _cscIdx:number = this._currentSortCols.findIndex((_csc)=>_csc.handle==_colClicked.params.handle);
             const _csc = this._currentSortCols[_cscIdx] || undefined;
@@ -185,7 +184,7 @@ export class StrikeGrid<T> extends EventTarget {
         }, {signal:_a.signal}));
 
         //Row listeners
-        this.el.querySelector('.strike-grid-scrollbody')
+        this.el.querySelector('.strike-grid-scrollbody') //delegated from the body, check for closest .strike-grid-row.
                     .addEventListener('click', (e)=>this._rowClickHandler(e), {signal:_a.signal});
     }
     protected _removeListeners():void {
