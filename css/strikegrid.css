@@ -323,16 +323,16 @@ arrow-up {
   }
 }
 .strike-grid-row.blue.selected:nth-child(odd) > div:nth-child(odd) {
-  background-color: rgb(12, 12, 207);
+  background-color: rgb(88, 88, 216);
 }
 .strike-grid-row.blue.selected:nth-child(odd) > div:nth-child(even) {
-  background: #0c0cd4;
+  background: #5c5cd9;
 }
 .strike-grid-row.blue.selected:nth-child(even) > div:nth-child(odd) {
-  background-color: #0d0ddd;
+  background-color: #6464db;
 }
 .strike-grid-row.blue.selected:nth-child(even) > div:nth-child(even) {
-  background: #0d0de2;
+  background: #6969dc;
 }
 .strike-grid-row.blur > div {
   -moz-filter: blur(3px);
