@@ -90,7 +90,8 @@ export class StrikeGrid<T> extends EventTarget {
             }
             if (defaultSortHandle) {
                 let _defaultSortCol:StrikeGridColParams<T> = colParams.find((_c)=>_c.handle==defaultSortHandle);
-                if (_defaultSortCol === undefined) throw new Error(`Error in setColumns(): default sort column ${defaultSortHandle} is not defined.`);
+                if (_defaultSortCol === undefined) 
+                    throw new Error(`Error in setColumns(): default sort column ${<string>defaultSortHandle} is not defined.`);
                 this._currentSortCols = [{handle:_defaultSortCol.handle, order:_defaultSortCol.defaultOrder || 'asc'}];
             }
         }
