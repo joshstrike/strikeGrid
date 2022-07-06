@@ -1,4 +1,4 @@
-try {window.require(<any>['./css/strikegrid.css'])} catch (e){}; //force webpack to include the css.
+try {require(<any>['./css/strikegrid.css'])} catch (e){}; //force webpack to include the css.
 import { StrikeGrid } from "./js/strike/component/StrikeGrid.js";
 
 type TestData = {id:number,strA:string,strB:string,difflength:{_,s},diffnum:number,_rowClasses:string};

@@ -1,5 +1,5 @@
 try {
-    window.require(['./css/strikegrid.css']);
+    require(['./css/strikegrid.css']);
 }
 catch (e) { }
 ;
