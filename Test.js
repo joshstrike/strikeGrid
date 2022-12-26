@@ -28,7 +28,7 @@ export class Test {
         let k = [];
         const testStrs = await (await (await fetch('assets/test.txt')).text()).split(' ');
         for (let c = 1; c < testStrs.length; c++) {
-            k.push({ id: c,
+            k.push({ id: c - 1,
                 strA: testStrs[c - 1],
                 strB: testStrs[c],
                 difflength: { _: "Huh " + Math.abs(testStrs[c].length - testStrs[c - 1].length), s: Math.abs(testStrs[c].length - testStrs[c - 1].length) },
