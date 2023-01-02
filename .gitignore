@@ -1,3 +1,7 @@
 **/.history
 .DS_Store
 **/DEV
+package-lock.json
+package.json
+**/.vscode
+node_modules/
