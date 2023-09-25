@@ -120,6 +120,7 @@ arrow-up {
     overflow-x:visible;
     overflow-y:scroll;
     max-height:100%;
+    height:100%;
 }
 @mixin alternateColors($baseColor) {
     &:nth-child(odd) > div {

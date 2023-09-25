@@ -158,6 +158,7 @@ arrow-up {
   overflow-x: visible;
   overflow-y: scroll;
   max-height: 100%;
+  height: 100%;
 }
 
 .strike-grid-row {

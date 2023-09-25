@@ -1,3 +1,5 @@
+/* Usage:$> npx webpack --config webpack.config.js */
+
 const path = require('path');
 
 module.exports = {
